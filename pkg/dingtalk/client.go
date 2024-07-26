@@ -41,16 +41,13 @@ func URLWithTimestamp(accessToken, secret string, timestamp int64) (string, erro
 		return dingtalkUrl.String(), nil
 	}
 	h := hmac.New(sha256.New, []byte(secret))
-	StringToSign := fmt.Sprintf("%d\n%s", timestamp, accessToken)
-	fmt.Println("sign: ", StringToSign)
-	if _, err := io.WriteString(h, StringToSign); err != nil {
-		return "", err
-	}
+	StringToSign := fmt.Sprintf("%d\n%s", timestamp, secret)
+	h.Write([]byte(StringToSign))
 	sign := base64.StdEncoding.EncodeToString(h.Sum(nil))
 	value.Set("timestamp", strconv.FormatInt(timestamp, 10))
 	value.Set("sign", sign)
 	dingtalkUrl.RawQuery = value.Encode()
-	fmt.Println("dingtalk url: ", dingtalkUrl.String())
+
 	return dingtalkUrl.String(), nil
 }
 
