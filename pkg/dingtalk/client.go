@@ -88,7 +88,7 @@ func (c *Client) Send(message pkg.Message) (*pkg.Response, error) {
 		return res, err
 	}
 	if res.ErrCode != 0 {
-		return res, errors.New("send message dingtalk failed")
+		return res, err
 	}
 	return res, nil
 }
