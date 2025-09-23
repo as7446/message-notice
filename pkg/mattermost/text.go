@@ -8,8 +8,8 @@ import (
 	"encoding/json"
 )
 
-// TextMessage represents Mattermost incoming webhook payload
-// https://developers.mattermost.com/integrate/webhooks/incoming/
+// TextMessage 表示 Mattermost 入站 webhook 的消息负载
+// 文档参考：https://developers.mattermost.com/integrate/webhooks/incoming/
 type TextMessage struct {
 	Text        string         `json:"text"`
 	Channel     string         `json:"channel,omitempty"`

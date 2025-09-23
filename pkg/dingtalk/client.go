@@ -46,7 +46,7 @@ func URLWithTimestamp(accessToken, secret string, timestamp int64) (string, erro
 	h.Write([]byte(StringToSign))
 	sign := base64.StdEncoding.EncodeToString(h.Sum(nil))
 	value.Set("timestamp", strconv.FormatInt(timestamp, 10))
-	// Let url.Values.Encode handle URL-encoding
+	// 交由 url.Values.Encode 处理 URL 编码
 	value.Set("sign", sign)
 	dingtalkUrl.RawQuery = value.Encode()
 

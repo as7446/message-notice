@@ -22,17 +22,17 @@ func main() {
 	var atMobiles string
 	var atAll bool
 
-	flag.StringVar(&accessToken, "token", "", "DingTalk robot access token")
-	flag.StringVar(&secret, "secret", "", "DingTalk robot secret (optional)")
-	flag.StringVar(&msgType, "type", "text", "message type: text|markdown")
-	flag.StringVar(&title, "title", "", "markdown title (for markdown type)")
-	flag.StringVar(&text, "text", "", "message content")
-	flag.StringVar(&atMobiles, "at", "", "comma-separated mobile numbers to @")
-	flag.BoolVar(&atAll, "atall", false, "@ all members")
+	flag.StringVar(&accessToken, "token", "", "钉钉机器人 access token")
+	flag.StringVar(&secret, "secret", "", "钉钉机器人 secret（可选）")
+	flag.StringVar(&msgType, "type", "text", "消息类型：text|markdown")
+	flag.StringVar(&title, "title", "", "Markdown 标题（当 type=markdown 时必填）")
+	flag.StringVar(&text, "text", "", "消息内容")
+	flag.StringVar(&atMobiles, "at", "", "以逗号分隔的手机号列表用于@")
+	flag.BoolVar(&atAll, "atall", false, "@所有人")
 	flag.Parse()
 
 	if accessToken == "" || text == "" {
-		log.Fatal("token and text are required")
+		log.Fatal("token 和 text 为必填")
 	}
 
 	client := dingtalk.NewClient(accessToken, secret)
@@ -54,7 +54,7 @@ func main() {
 			log.Fatal(err)
 		}
 	default:
-		fmt.Printf("unknown type: %s\n", msgType)
+		fmt.Printf("未知类型: %s\n", msgType)
 		flag.Usage()
 	}
 }

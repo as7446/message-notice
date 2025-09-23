@@ -48,7 +48,7 @@ func (c *Client) Send(message pkg.Message) (*pkg.Response, error) {
 	if err != nil {
 		return res, err
 	}
-	// Mattermost incoming webhook typically returns 200 OK with empty body
+	// Mattermost 入站 webhook 通常返回 200 OK 且响应体为空
 	if len(respBytes) == 0 && resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		return res, nil
 	}
