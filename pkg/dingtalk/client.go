@@ -12,12 +12,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/as7446/message-notice/pkg"
 	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/as7446/message-notice/pkg"
 )
 
 func URL(accessToken, secret string) (string, error) {
@@ -45,6 +46,7 @@ func URLWithTimestamp(accessToken, secret string, timestamp int64) (string, erro
 	h.Write([]byte(StringToSign))
 	sign := base64.StdEncoding.EncodeToString(h.Sum(nil))
 	value.Set("timestamp", strconv.FormatInt(timestamp, 10))
+	// Let url.Values.Encode handle URL-encoding
 	value.Set("sign", sign)
 	dingtalkUrl.RawQuery = value.Encode()
 
@@ -54,11 +56,13 @@ func URLWithTimestamp(accessToken, secret string, timestamp int64) (string, erro
 type Client struct {
 	AccessToken string
 	Secret      string
+	HTTPClient  *http.Client
 }
 
 func NewClient(accessToken, secret string) *Client {
-	return &Client{accessToken, secret}
+	return &Client{AccessToken: accessToken, Secret: secret, HTTPClient: &http.Client{Timeout: 10 * time.Second}}
 }
+
 func (c *Client) Send(message pkg.Message) (*pkg.Response, error) {
 	res := &pkg.Response{}
 	b, err := message.ToBytes()
@@ -72,23 +76,29 @@ func (c *Client) Send(message pkg.Message) (*pkg.Response, error) {
 
 	req, err := http.NewRequest(http.MethodPost, dingUrl, bytes.NewReader(b))
 	if err != nil {
-		return res, nil
+		return res, err
 	}
 	req.Header.Add("Accept-Charset", "utf8")
 	req.Header.Add("Content-Type", "application/json")
-	client := http.Client{}
+	client := c.HTTPClient
+	if client == nil {
+		client = &http.Client{Timeout: 10 * time.Second}
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return res, err
 	}
 	defer resp.Body.Close()
 	respBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return res, err
+	}
 	err = json.Unmarshal(respBytes, &res)
 	if err != nil {
 		return res, err
 	}
 	if res.ErrCode != 0 {
-		return res, err
+		return res, fmt.Errorf("dingtalk error: code=%d msg=%s", res.ErrCode, res.ErrMsg)
 	}
 	return res, nil
 }
