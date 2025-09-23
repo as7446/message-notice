@@ -68,3 +68,38 @@ go run ./cmd/mattermost \
 ```
 - `-icon-url` 可用图片 URL 替代 `-icon-emoji`
 - `-attach` 简易格式：`title|text|color`（如需复杂附件，请在库侧使用 `AddAttachment` 并填充更多字段）
+
+**Mattermost（高级）**
+- `@提醒`：
+```
+go run ./cmd/mattermost \
+  -webhook "$WEBHOOK" \
+  -text "发布完成" \
+  -mentions "alice,bob"   # 会自动在文本前插入 "@alice @bob" 可见提醒
+```
+- 复杂附件（JSON 字符串或文件）：
+```
+# JSON 字符串（数组或单对象均可）
+go run ./cmd/mattermost \
+  -webhook "$WEBHOOK" \
+  -text "发布结果" \
+  -attachments-json '[{"title":"Build #42","text":"OK","color":"#2ecc71","fields":[{"title":"Service","value":"api","short":true}]}]'
+
+# JSON 文件
+cat > attach.json <<'JSON'
+[
+  {
+    "title": "Build #42",
+    "pretext": "CI",
+    "text": "OK",
+    "color": "#2ecc71",
+    "fields": [
+      {"title": "Service", "value": "api", "short": true},
+      {"title": "Region", "value": "us-east-1", "short": true}
+    ]
+  }
+]
+JSON
+
+go run ./cmd/mattermost -webhook "$WEBHOOK" -text "发布结果" -attachments-file attach.json
+```
