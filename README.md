@@ -173,4 +173,4 @@ go run ./cmd/wecom \
 ```
 
 ### 构建与交付
-- 使用 Make：`make build-all`（在 `bin/` 下生成四个 CLI）
+- 使用 Make：`make build-all`（在 `bin/` 下生成CLI）
