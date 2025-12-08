@@ -45,6 +45,53 @@ func main() {
 - 支持字段：`text`、`channel`、`username`、`icon_url`、`icon_emoji`、`attachments`、`props`
 - 附件字段：`fallback`、`color`、`pretext`、`author_*`、`title`、`title_link`、`text`、`fields`、`image_url`、`thumb_url`、`footer`、`footer_icon`、`ts`
 
+**feishu (library)**
+```
+package main
+
+import "github.com/as7446/message-notice/pkg/feishu"
+
+func main() {
+	client := feishu.NewClient("https://open.feishu.cn/open-apis/bot/v2/hook/xxx", "secret") // secret 可为空
+
+	// 文本 + @user_id
+	txt := feishu.NewTextMessage().
+		SetText("发布完成").
+		MentionUserIDs([]string{"ou_xxx"})
+	client.Send(txt)
+
+	// post 富文本
+	post := feishu.NewPostMessage().
+		SetTitle("发布结果").
+		SetTextLines([]string{"服务: api", "状态: 通过"})
+	client.Send(post)
+}
+```
+
+**wecom (library)**
+```
+package main
+
+import "github.com/as7446/message-notice/pkg/wecom"
+
+func main() {
+	client := wecom.NewClient("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx")
+
+	// 文本 + @userid
+	text := wecom.NewTextMessage().
+		SetText("上线完成").
+		SetMentionUserIDs([]string{"zhangsan"}).
+		AppendVisibleMentions([]string{"zhangsan"})
+	client.Send(text)
+
+	// Markdown
+	md := wecom.NewMarkdownMessage().
+		SetContent("**服务**: api\n**状态**: 通过").
+		AppendMentions([]string{"zhangsan"})
+	client.Send(md)
+}
+```
+
 ### CLI 使用
 **DingTalk**
 ```
@@ -103,3 +150,27 @@ JSON
 
 go run ./cmd/mattermost -webhook "$WEBHOOK" -text "发布结果" -attachments-file attach.json
 ```
+
+**Feishu**
+```
+go run ./cmd/feishu \
+  -webhook "https://open.feishu.cn/open-apis/bot/v2/hook/xxx" \
+  -secret "$SECRET" \
+  -type text \
+  -text "发布完成" \
+  -at "ou_xxx,ou_yyy"
+```
+- 富文本（post）：`go run ./cmd/feishu -webhook "..." -type post -title "发布结果" -text "服务: api\n状态: 通过"`
+
+**WeCom（企业微信）**
+```
+go run ./cmd/wecom \
+  -webhook "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx" \
+  -type markdown \
+  -text "**发布状态**: 成功" \
+  -at-userids "zhangsan,lisi" \
+  -at-mobiles "1390000"
+```
+
+### 构建与交付
+- 使用 Make：`make build-all`（在 `bin/` 下生成四个 CLI）

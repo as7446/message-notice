@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/as7446/message-notice/internal/cliutil"
 	"github.com/as7446/message-notice/pkg/mattermost"
 )
 
@@ -39,23 +40,7 @@ func main() {
 	}
 
 	// 如果提供了 mentions，则将其前置到文本中
-	if mentions != "" {
-		parts := strings.Split(mentions, ",")
-		var atTokens []string
-		for _, m := range parts {
-			m = strings.TrimSpace(m)
-			if m == "" {
-				continue
-			}
-			if strings.HasPrefix(m, "@") {
-				m = m[1:]
-			}
-			atTokens = append(atTokens, "@"+m)
-		}
-		if len(atTokens) > 0 {
-			text = strings.Join(atTokens, " ") + "\n" + text
-		}
-	}
+	text = prependMentions(text, mentions)
 
 	client := mattermost.NewClient(webhook)
 	msg := mattermost.NewTextMessage().SetText(text)
@@ -102,6 +87,22 @@ func main() {
 	if _, err := client.Send(msg); err != nil {
 		log.Fatal(err)
 	}
+}
+
+// prependMentions 将 mentions 转为可见 @ 并放在文本前面
+func prependMentions(text, mentions string) string {
+	users := cliutil.SplitCSV(mentions)
+	if len(users) == 0 {
+		return text
+	}
+	var atTokens []string
+	for _, u := range users {
+		if strings.HasPrefix(u, "@") {
+			u = strings.TrimPrefix(u, "@")
+		}
+		atTokens = append(atTokens, "@"+u)
+	}
+	return strings.Join(atTokens, " ") + "\n" + text
 }
 
 // addAttachmentsFromJSON 支持单对象或数组形式的附件

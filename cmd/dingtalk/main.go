@@ -8,8 +8,8 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"strings"
 
+	"github.com/as7446/message-notice/internal/cliutil"
 	"github.com/as7446/message-notice/pkg/dingtalk"
 )
 
@@ -37,10 +37,7 @@ func main() {
 
 	client := dingtalk.NewClient(accessToken, secret)
 
-	mobiles := []string{}
-	if atMobiles != "" {
-		mobiles = strings.Split(atMobiles, ",")
-	}
+	mobiles := cliutil.SplitCSV(atMobiles)
 
 	switch msgType {
 	case "markdown":
