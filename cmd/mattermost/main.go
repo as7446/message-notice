@@ -30,9 +30,9 @@ func main() {
 	flag.StringVar(&iconURL, "icon-url", "", "覆盖头像 URL")
 	flag.StringVar(&iconEmoji, "icon-emoji", "", "覆盖头像 Emoji，例如 :rocket:")
 	flag.StringVar(&attach, "attach", "", "'title|text|color' 附件简易格式；可多次运行附加")
-	flag.StringVar(&attachmentsJSON, "attachments-json", "", "完整附件的 JSON 字符串（单对象或数组）")
-	flag.StringVar(&attachmentsFile, "attachments-file", "", "包含附件 JSON 的文件路径（单对象或数组）")
-	flag.StringVar(&mentions, "mentions", "", "以逗号分隔的用户名列表用于可见@（例如 user1,user2）")
+	flag.StringVar(&attachmentsJSON, "attachments-json", "", "完整附件的 JSON 字符串, 单对象或数组")
+	flag.StringVar(&attachmentsFile, "attachments-file", "", "包含附件 JSON 的文件路径, 单对象或数组")
+	flag.StringVar(&mentions, "mentions", "", "以逗号分隔的用户名列表用于可见@, 例如 user1,user2")
 	flag.Parse()
 
 	if webhook == "" || text == "" {

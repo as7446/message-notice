@@ -23,7 +23,7 @@ type Client struct {
 	NowTimestamp func() int64
 }
 
-// NewClient 创建客户端；secret 可为空（无需签名）
+// NewClient 创建客户端；secret 可为空
 func NewClient(webhook, secret string) *Client {
 	return &Client{
 		Webhook:      webhook,

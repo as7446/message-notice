@@ -18,11 +18,11 @@ func main() {
 	var at string
 
 	flag.StringVar(&webhook, "webhook", "", "飞书机器人 Webhook，形如 https://open.feishu.cn/open-apis/bot/v2/hook/xxx")
-	flag.StringVar(&secret, "secret", "", "飞书机器人签名密钥（可选）")
+	flag.StringVar(&secret, "secret", "", "飞书机器人签名密钥,可选")
 	flag.StringVar(&msgType, "type", "text", "消息类型：text|post")
-	flag.StringVar(&title, "title", "", "post 消息标题（type=post 时可选）")
+	flag.StringVar(&title, "title", "", "post 消息标题 type=post 时可选")
 	flag.StringVar(&text, "text", "", "消息内容，多行可直接换行输入")
-	flag.StringVar(&at, "at", "", "以逗号分隔的 user_id/open_id 列表，用于 @ 提醒（仅 text 支持自动拼接）")
+	flag.StringVar(&at, "at", "", "以逗号分隔的 user_id/open_id 列表，用于 @ 提醒, 仅 text 支持自动拼接")
 	flag.Parse()
 
 	if webhook == "" || text == "" {
